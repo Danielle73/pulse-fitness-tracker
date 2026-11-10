@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import Sidebar from "./components/layout/Sidebar";
 import TrendChart from "./components/dashboard/TrendChart";
+import StatCard from "./components/dashboard/StatCard";
 
 type Range = "This week" | "This month" | "This year";
 type Section = "Overview" | "Activity" | "Wellness" | "Settings";
@@ -129,6 +130,15 @@ function parseMinutes(value: string) {
 //   );
 // }
 
+function getActiveDaysMessage(days: number): string {
+  if (days === 0) return "Let's get moving!";
+  if (days === 1) return "Great start!";
+  if (days <= 3) return "You're building momentum!";
+  if (days <= 5) return "Great consistency!";
+  if (days === 6) return "Almost there!";
+  return "Weekly goal achieved!";
+}
+
 export function App() {
   const [range, setRange] = useState<Range>("This week");
   const [section, setSection] = useState<Section>("Overview");
@@ -172,6 +182,10 @@ export function App() {
     setIsAddingActivity(false);
   }
 
+  const activeDays = Math.min(7, 5 + (addedMinutes > 0 ? 1 : 0));
+
+  const activeDaysMessage = getActiveDaysMessage(activeDays);
+
   return (
     <div className="app">
       <Sidebar section={section} setSection={setSection} />
@@ -210,7 +224,7 @@ export function App() {
           </div>
         </header>
         <section className="kpis" aria-label="Fitness summary">
-          <article className="card kpi">
+          {/* <article className="card kpi">
             <div className="kpi-head">
               Steps walked <div className="kpi-icon">♧</div>
             </div>
@@ -218,8 +232,14 @@ export function App() {
             <div className="kpi-meta">
               <span className="up">↑ 12.4%</span> vs last period
             </div>
-          </article>
-          <article className="card kpi">
+          </article> */}
+          <StatCard
+            title="Steps walked"
+            icon="♧"
+            value={data.steps}
+            percentage={12.4}
+          />
+          {/* <article className="card kpi">
             <div className="kpi-head">
               Exercise minutes <div className="kpi-icon">◷</div>
             </div>
@@ -229,8 +249,14 @@ export function App() {
             <div className="kpi-meta">
               <span className="up">↑ 8.2%</span> vs last period
             </div>
-          </article>
-          <article className="card kpi">
+          </article> */}
+          <StatCard
+            title="Exercise minutes"
+            icon="◷"
+            value={displayedMinutes.toLocaleString()}
+            percentage={8.2}
+          />
+          {/* <article className="card kpi">
             <div className="kpi-head">
               Calories burned <div className="kpi-icon">♨</div>
             </div>
@@ -240,8 +266,15 @@ export function App() {
             <div className="kpi-meta">
               <span className="up">↑ 5.7%</span> vs last period
             </div>
-          </article>
-          <article className="card kpi">
+          </article> */}
+          <StatCard
+            title="Calories burned"
+            icon="♨"
+            value={displayedCalories.toLocaleString()}
+            percentage={5.7}
+          />
+
+          {/* <article className="card kpi">
             <div className="kpi-head">
               Active days <div className="kpi-icon">✓</div>
             </div>
@@ -251,7 +284,19 @@ export function App() {
             <div className="kpi-meta">
               <span className="up">Great consistency!</span>
             </div>
-          </article>
+          </article> */}
+
+          <StatCard
+            title="Active days"
+            icon="✓"
+            value={
+              <>
+              {activeDays}
+                <small>/ 7</small>
+              </>
+            }
+            message={activeDaysMessage}
+          />
         </section>
         <div className="grid">
           <section className="card panel">
