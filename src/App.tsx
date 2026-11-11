@@ -1,8 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import Sidebar from "./components/layout/Sidebar";
-import TrendChart from "./components/dashboard/TrendChart";
-import StatCard from "./components/dashboard/StatCard";
+import Overview from "./pages/Overview";
 
 type Range = "This week" | "This month" | "This year";
 type Section = "Overview" | "Activity" | "Wellness" | "Settings";
@@ -164,7 +163,19 @@ export function App() {
             <div className="avatar">AS</div>
           </div>
         </header>
-        <section className="kpis" aria-label="Fitness summary">
+
+        <Overview
+          steps={data.steps}
+          minutes={displayedMinutes}
+          calories={displayedCalories}
+          activeDays={activeDays}
+          activeDaysMessage={activeDaysMessage}
+          range={range}
+          goal={data.goal}
+          values={data.values}
+        />
+
+        {/* <section className="kpis" aria-label="Fitness summary">
           <StatCard
             title="Steps walked"
             icon="♧"
@@ -195,8 +206,8 @@ export function App() {
             }
             message={activeDaysMessage}
           />
-        </section>
-        <div className="grid">
+        </section> */}
+        {/* <div className="grid">
           <section className="card panel">
             <div className="panel-head">
               <div>
@@ -296,7 +307,7 @@ export function App() {
               </div>
             </div>
           </section>
-        </div>
+        </div> */}
         <section className="card panel table-panel">
           <div className="panel-head">
             <div>
