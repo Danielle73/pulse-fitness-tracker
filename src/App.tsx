@@ -82,54 +82,6 @@ function parseMinutes(value: string) {
     : Number(value.replace(",", ""));
 }
 
-// function TrendChart({ values }: { values: number[] }) {
-//   const points = values
-//     .map((value, index) => `${58 + index * 100},${180 - value * 13}`)
-//     .join(" ");
-//   const area = `${points} 658,180 58,180`;
-//   return (
-//     <svg viewBox="0 0 700 210" role="img" aria-label="Daily steps trend">
-//       <defs>
-//         <linearGradient id="area" x1="0" x2="0" y1="0" y2="1">
-//           <stop offset="0" stopColor="#18a999" stopOpacity=".2" />
-//           <stop offset="1" stopColor="#18a999" stopOpacity="0" />
-//         </linearGradient>
-//       </defs>
-//       {[24, 76, 128, 180].map((y) => (
-//         <line className="grid-line" key={y} x1="38" y1={y} x2="680" y2={y} />
-//       ))}
-//       <text className="axis-label" x="0" y="28">
-//         12k
-//       </text>
-//       <text className="axis-label" x="5" y="80">
-//         8k
-//       </text>
-//       <text className="axis-label" x="5" y="132">
-//         4k
-//       </text>
-//       <text className="axis-label" x="15" y="184">
-//         0
-//       </text>
-//       <polygon className="line-fill" points={area} />
-//       <polyline className="steps-line" points={points} />
-//       {values.map((value, index) => (
-//         <circle
-//           className="steps-dot"
-//           key={index}
-//           cx={58 + index * 100}
-//           cy={180 - value * 13}
-//           r="5"
-//         />
-//       ))}
-//       {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, index) => (
-//         <text className="axis-label" key={day} x={49 + index * 100} y="202">
-//           {day}
-//         </text>
-//       ))}
-//     </svg>
-//   );
-// }
-
 function getActiveDaysMessage(days: number): string {
   if (days === 0) return "Let's get moving!";
   if (days === 1) return "Great start!";
@@ -189,17 +141,6 @@ export function App() {
   return (
     <div className="app">
       <Sidebar section={section} setSection={setSection} />
-      {/* <aside>
-        <div className="brand"><div className="brand-mark">✦</div><span>pulse</span></div>
-        <nav aria-label="Primary navigation">
-          {(['Overview', 'Activity', 'Wellness', 'Settings'] as Section[]).map((item) => (
-            <button className={section === item ? 'active' : ''} key={item} onClick={() => setSection(item)}>
-              <span className="nav-icon">{item === 'Overview' ? '⌂' : item === 'Activity' ? '◷' : item === 'Wellness' ? '♡' : '⚙'}</span><span>{item}</span>
-            </button>
-          ))}
-        </nav>
-        <div className="side-note"><p>Keep moving!</p><small>You're 1,840 steps away from your daily goal.</small></div>
-      </aside> */}
       <main>
         <header>
           <div>
@@ -224,49 +165,18 @@ export function App() {
           </div>
         </header>
         <section className="kpis" aria-label="Fitness summary">
-          {/* <article className="card kpi">
-            <div className="kpi-head">
-              Steps walked <div className="kpi-icon">♧</div>
-            </div>
-            <div className="kpi-value">{data.steps}</div>
-            <div className="kpi-meta">
-              <span className="up">↑ 12.4%</span> vs last period
-            </div>
-          </article> */}
           <StatCard
             title="Steps walked"
             icon="♧"
             value={data.steps}
             percentage={12.4}
           />
-          {/* <article className="card kpi">
-            <div className="kpi-head">
-              Exercise minutes <div className="kpi-icon">◷</div>
-            </div>
-            <div className="kpi-value">
-              {displayedMinutes.toLocaleString()} <small>min</small>
-            </div>
-            <div className="kpi-meta">
-              <span className="up">↑ 8.2%</span> vs last period
-            </div>
-          </article> */}
           <StatCard
             title="Exercise minutes"
             icon="◷"
             value={displayedMinutes.toLocaleString()}
             percentage={8.2}
           />
-          {/* <article className="card kpi">
-            <div className="kpi-head">
-              Calories burned <div className="kpi-icon">♨</div>
-            </div>
-            <div className="kpi-value">
-              {displayedCalories.toLocaleString()} <small>kcal</small>
-            </div>
-            <div className="kpi-meta">
-              <span className="up">↑ 5.7%</span> vs last period
-            </div>
-          </article> */}
           <StatCard
             title="Calories burned"
             icon="♨"
@@ -274,24 +184,12 @@ export function App() {
             percentage={5.7}
           />
 
-          {/* <article className="card kpi">
-            <div className="kpi-head">
-              Active days <div className="kpi-icon">✓</div>
-            </div>
-            <div className="kpi-value">
-              {Math.min(7, 5 + (addedMinutes > 0 ? 1 : 0))} <small>/ 7</small>
-            </div>
-            <div className="kpi-meta">
-              <span className="up">Great consistency!</span>
-            </div>
-          </article> */}
-
           <StatCard
             title="Active days"
             icon="✓"
             value={
               <>
-              {activeDays}
+                {activeDays}
                 <small>/ 7</small>
               </>
             }
