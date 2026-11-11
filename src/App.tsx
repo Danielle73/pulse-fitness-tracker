@@ -1,7 +1,8 @@
 import { useState } from "react";
-import type { FormEvent } from "react";
 import Sidebar from "./components/layout/Sidebar";
 import Overview from "./pages/Overview";
+import type { Activity, ActivityOption } from "./types/activity";
+import RecentActivity from "./components/dashboard/RecentActivity";
 
 type Range = "This week" | "This month" | "This year";
 type Section = "Overview" | "Activity" | "Wellness" | "Settings";
@@ -30,14 +31,14 @@ const ranges: Record<
   },
 };
 
-type Activity = {
-  id: number;
-  icon: string;
-  name: string;
-  date: string;
-  duration: number;
-  calories: number;
-};
+// type Activity = {
+//   id: number;
+//   icon: string;
+//   name: string;
+//   date: string;
+//   duration: number;
+//   calories: number;
+// };
 
 const initialActivities: Activity[] = [
   {
@@ -66,7 +67,7 @@ const initialActivities: Activity[] = [
   },
 ];
 
-const activityOptions = [
+const activityOptions: ActivityOption[] = [
   { name: "Walking", icon: "🚶", caloriesPerMinute: 4 },
   { name: "Running", icon: "🏃", caloriesPerMinute: 12 },
   { name: "Cycling", icon: "🚲", caloriesPerMinute: 9 },
@@ -94,9 +95,6 @@ export function App() {
   const [range, setRange] = useState<Range>("This week");
   const [section, setSection] = useState<Section>("Overview");
   const [activities, setActivities] = useState<Activity[]>(initialActivities);
-  const [isAddingActivity, setIsAddingActivity] = useState(false);
-  const [activityType, setActivityType] = useState(activityOptions[0].name);
-  const [duration, setDuration] = useState("");
   const data = ranges[range];
   const addedMinutes = activities
     .slice(0, -3)
@@ -108,14 +106,11 @@ export function App() {
       .slice(0, -3)
       .reduce((sum, activity) => sum + activity.calories, 0);
 
-  function addActivity(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const minutes = Number(duration);
-    if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) return;
-
+  function addActivity(activityType: string, minutes: number) {
     const selectedActivity = activityOptions.find(
       (activity) => activity.name === activityType,
     );
+
     if (!selectedActivity) return;
 
     setActivities((current) => [
@@ -129,9 +124,32 @@ export function App() {
       },
       ...current,
     ]);
-    setDuration("");
-    setIsAddingActivity(false);
   }
+
+  // function addActivity(event: FormEvent<HTMLFormElement>) {
+  //   event.preventDefault();
+  //   const minutes = Number(duration);
+  //   if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) return;
+
+  //   const selectedActivity = activityOptions.find(
+  //     (activity) => activity.name === activityType,
+  //   );
+  //   if (!selectedActivity) return;
+
+  //   setActivities((current) => [
+  //     {
+  //       id: Date.now(),
+  //       icon: selectedActivity.icon,
+  //       name: selectedActivity.name,
+  //       date: "Today, just now",
+  //       duration: minutes,
+  //       calories: minutes * selectedActivity.caloriesPerMinute,
+  //     },
+  //     ...current,
+  //   ]);
+  //   setDuration("");
+  //   setIsAddingActivity(false);
+  // }
 
   const activeDays = Math.min(7, 5 + (addedMinutes > 0 ? 1 : 0));
 
@@ -174,8 +192,14 @@ export function App() {
           goal={data.goal}
           values={data.values}
         />
-        
-        <section className="card panel table-panel">
+
+        <RecentActivity
+          activities={activities}
+          activityOptions={activityOptions}
+          onAddActivity={addActivity}
+        />
+
+        {/* <section className="card panel table-panel">
           <div className="panel-head">
             <div>
               <h2>Recent activity</h2>
@@ -247,7 +271,7 @@ export function App() {
               ))}
             </tbody>
           </table>
-        </section>
+        </section> */}
       </main>
     </div>
   );
