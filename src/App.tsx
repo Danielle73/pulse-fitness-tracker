@@ -4,6 +4,8 @@ import Overview from "./pages/Overview";
 import type { Activity as ActivityType, ActivityOption } from "./types/activity";
 import RecentActivity from "./components/dashboard/RecentActivity";
 import Activity from "./pages/Activity";
+import Wellness from "./pages/Wellness";
+import Settings from "./pages/Settings";
 
 type Range = "This week" | "This month" | "This year";
 type Section = "Overview" | "Activity" | "Wellness" | "Settings";
@@ -211,6 +213,10 @@ export function App() {
             onAddActivity={addActivity}
           />
         )}
+
+        {section === "Wellness" && <Wellness />}
+        {section === "Settings" && <Settings />}
+        
 
         {/* <Overview
           steps={data.steps}
