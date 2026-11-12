@@ -1,8 +1,9 @@
 import { useState } from "react";
 import Sidebar from "./components/layout/Sidebar";
 import Overview from "./pages/Overview";
-import type { Activity, ActivityOption } from "./types/activity";
+import type { Activity as ActivityType, ActivityOption } from "./types/activity";
 import RecentActivity from "./components/dashboard/RecentActivity";
+import Activity from "./pages/Activity";
 
 type Range = "This week" | "This month" | "This year";
 type Section = "Overview" | "Activity" | "Wellness" | "Settings";
@@ -40,7 +41,7 @@ const ranges: Record<
 //   calories: number;
 // };
 
-const initialActivities: Activity[] = [
+const initialActivities: ActivityType[] = [
   {
     id: 1,
     icon: "🏃",
@@ -94,7 +95,7 @@ function getActiveDaysMessage(days: number): string {
 export function App() {
   const [range, setRange] = useState<Range>("This week");
   const [section, setSection] = useState<Section>("Overview");
-  const [activities, setActivities] = useState<Activity[]>(initialActivities);
+  const [activities, setActivities] = useState<ActivityType[]>(initialActivities);
   const data = ranges[range];
   const addedMinutes = activities
     .slice(0, -3)
@@ -182,7 +183,36 @@ export function App() {
           </div>
         </header>
 
-        <Overview
+        {section === "Overview" && (
+          <>
+            <Overview
+              steps={data.steps}
+              minutes={displayedMinutes}
+              calories={displayedCalories}
+              activeDays={activeDays}
+              activeDaysMessage={activeDaysMessage}
+              range={range}
+              goal={data.goal}
+              values={data.values}
+            />
+
+            <RecentActivity
+              activities={activities}
+              activityOptions={activityOptions}
+              onAddActivity={addActivity}
+            />
+          </>
+        )}
+
+        {section === "Activity" && (
+          <Activity
+            activities={activities}
+            activityOptions={activityOptions}
+            onAddActivity={addActivity}
+          />
+        )}
+
+        {/* <Overview
           steps={data.steps}
           minutes={displayedMinutes}
           calories={displayedCalories}
@@ -197,7 +227,7 @@ export function App() {
           activities={activities}
           activityOptions={activityOptions}
           onAddActivity={addActivity}
-        />
+        /> */}
 
         {/* <section className="card panel table-panel">
           <div className="panel-head">
