@@ -1,7 +1,10 @@
 import { useState } from "react";
 import Sidebar from "./components/layout/Sidebar";
 import Overview from "./pages/Overview";
-import type { Activity as ActivityType, ActivityOption } from "./types/activity";
+import type {
+  Activity as ActivityType,
+  ActivityOption,
+} from "./types/activity";
 import RecentActivity from "./components/dashboard/RecentActivity";
 import Activity from "./pages/Activity";
 import Wellness from "./pages/Wellness";
@@ -33,15 +36,6 @@ const ranges: Record<
     values: [8.2, 9.6, 8.9, 10.8, 9.5, 11.4, 10.1],
   },
 };
-
-// type Activity = {
-//   id: number;
-//   icon: string;
-//   name: string;
-//   date: string;
-//   duration: number;
-//   calories: number;
-// };
 
 const initialActivities: ActivityType[] = [
   {
@@ -97,7 +91,8 @@ function getActiveDaysMessage(days: number): string {
 export function App() {
   const [range, setRange] = useState<Range>("This week");
   const [section, setSection] = useState<Section>("Overview");
-  const [activities, setActivities] = useState<ActivityType[]>(initialActivities);
+  const [activities, setActivities] =
+    useState<ActivityType[]>(initialActivities);
   const data = ranges[range];
   const addedMinutes = activities
     .slice(0, -3)
@@ -129,34 +124,53 @@ export function App() {
     ]);
   }
 
-  // function addActivity(event: FormEvent<HTMLFormElement>) {
-  //   event.preventDefault();
-  //   const minutes = Number(duration);
-  //   if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) return;
-
-  //   const selectedActivity = activityOptions.find(
-  //     (activity) => activity.name === activityType,
-  //   );
-  //   if (!selectedActivity) return;
-
-  //   setActivities((current) => [
-  //     {
-  //       id: Date.now(),
-  //       icon: selectedActivity.icon,
-  //       name: selectedActivity.name,
-  //       date: "Today, just now",
-  //       duration: minutes,
-  //       calories: minutes * selectedActivity.caloriesPerMinute,
-  //     },
-  //     ...current,
-  //   ]);
-  //   setDuration("");
-  //   setIsAddingActivity(false);
-  // }
-
   const activeDays = Math.min(7, 5 + (addedMinutes > 0 ? 1 : 0));
 
   const activeDaysMessage = getActiveDaysMessage(activeDays);
+
+  function renderPage() {
+    switch (section) {
+      case "Overview":
+        return (
+          <>
+            <Overview
+              steps={data.steps}
+              minutes={displayedMinutes}
+              calories={displayedCalories}
+              activeDays={activeDays}
+              activeDaysMessage={activeDaysMessage}
+              range={range}
+              goal={data.goal}
+              values={data.values}
+            />
+
+            <RecentActivity
+              activities={activities}
+              activityOptions={activityOptions}
+              onAddActivity={addActivity}
+            />
+          </>
+        );
+
+      case "Activity":
+        return (
+          <Activity
+            activities={activities}
+            activityOptions={activityOptions}
+            onAddActivity={addActivity}
+          />
+        );
+
+      case "Wellness":
+        return <Wellness />;
+
+      case "Settings":
+        return <Settings />;
+
+      default:
+        return null;
+    }
+  }
 
   return (
     <div className="app">
@@ -184,130 +198,7 @@ export function App() {
             <div className="avatar">AS</div>
           </div>
         </header>
-
-        {section === "Overview" && (
-          <>
-            <Overview
-              steps={data.steps}
-              minutes={displayedMinutes}
-              calories={displayedCalories}
-              activeDays={activeDays}
-              activeDaysMessage={activeDaysMessage}
-              range={range}
-              goal={data.goal}
-              values={data.values}
-            />
-
-            <RecentActivity
-              activities={activities}
-              activityOptions={activityOptions}
-              onAddActivity={addActivity}
-            />
-          </>
-        )}
-
-        {section === "Activity" && (
-          <Activity
-            activities={activities}
-            activityOptions={activityOptions}
-            onAddActivity={addActivity}
-          />
-        )}
-
-        {section === "Wellness" && <Wellness />}
-        {section === "Settings" && <Settings />}
-        
-
-        {/* <Overview
-          steps={data.steps}
-          minutes={displayedMinutes}
-          calories={displayedCalories}
-          activeDays={activeDays}
-          activeDaysMessage={activeDaysMessage}
-          range={range}
-          goal={data.goal}
-          values={data.values}
-        />
-
-        <RecentActivity
-          activities={activities}
-          activityOptions={activityOptions}
-          onAddActivity={addActivity}
-        /> */}
-
-        {/* <section className="card panel table-panel">
-          <div className="panel-head">
-            <div>
-              <h2>Recent activity</h2>
-              <p className="subtle">Your latest workouts</p>
-            </div>
-            <button
-              className="primary-button"
-              onClick={() => setIsAddingActivity((current) => !current)}
-            >
-              {isAddingActivity ? "Close" : "+ Add activity"}
-            </button>
-          </div>
-          {isAddingActivity && (
-            <form className="activity-form" onSubmit={addActivity}>
-              <label>
-                Activity
-                <select
-                  value={activityType}
-                  onChange={(event) => setActivityType(event.target.value)}
-                >
-                  {activityOptions.map((activity) => (
-                    <option key={activity.name}>{activity.name}</option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Duration (minutes)
-                <input
-                  type="number"
-                  min="1"
-                  max="1440"
-                  value={duration}
-                  onChange={(event) => setDuration(event.target.value)}
-                  placeholder="e.g. 30"
-                  required
-                />
-              </label>
-              <button className="primary-button" type="submit">
-                Save activity
-              </button>
-            </form>
-          )}
-          <table>
-            <thead>
-              <tr>
-                <th>Activity</th>
-                <th>Date</th>
-                <th>Duration</th>
-                <th>Calories</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {activities.map((activity) => (
-                <tr key={activity.id}>
-                  <td>
-                    <div className="activity-name">
-                      <span className="activity-badge">{activity.icon}</span>
-                      {activity.name}
-                    </div>
-                  </td>
-                  <td>{activity.date}</td>
-                  <td>{activity.duration} min</td>
-                  <td>{activity.calories} kcal</td>
-                  <td>
-                    <span className="pill">Completed</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section> */}
+        {renderPage()}
       </main>
     </div>
   );
