@@ -14,21 +14,6 @@ import { getActiveDaysMessage } from "./utils/dashboardHelpers";
 
 type Section = "Overview" | "Activity" | "Wellness" | "Settings";
 
-// function parseMinutes(value: string) {
-//   return value.endsWith("M")
-//     ? Number(value.slice(0, -1)) * 1000000
-//     : Number(value.replace(",", ""));
-// }
-
-// function getActiveDaysMessage(days: number): string {
-//   if (days === 0) return "Let's get moving!";
-//   if (days === 1) return "Great start!";
-//   if (days <= 3) return "You're building momentum!";
-//   if (days <= 5) return "Great consistency!";
-//   if (days === 6) return "Almost there!";
-//   return "Weekly goal achieved!";
-// }
-
 export function App() {
   const [range, setRange] = useState<Range>("This week");
   const [section, setSection] = useState<Section>("Overview");
