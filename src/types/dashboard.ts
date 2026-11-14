@@ -1,0 +1,1 @@
+export type Range = "This week" | "This month" | "This year";
