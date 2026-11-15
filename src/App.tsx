@@ -102,34 +102,8 @@ export function App() {
     <div className="app">
       <Sidebar section={section} setSection={setSection} />
       <main>
-        <AppHeader 
-        section={section} 
-        range={range} 
-        onRangeChange={setRange} 
-        />
+        <AppHeader section={section} range={range} onRangeChange={setRange} />
 
-        {/* <header>
-          <div>
-            <p className="eyebrow">{section} · Tuesday, June 18, 2024</p>
-            <h1>
-              Good morning, Alex <span aria-hidden="true">👋</span>
-            </h1>
-          </div>
-          <div className="header-actions">
-            <label className="date-picker">
-              Range{" "}
-              <select
-                value={range}
-                onChange={(event) => setRange(event.target.value as Range)}
-              >
-                {Object.keys(ranges).map((item) => (
-                  <option key={item}>{item}</option>
-                ))}
-              </select>
-            </label>
-            <div className="avatar">AS</div>
-          </div>
-        </header> */}
         {renderPage()}
       </main>
     </div>
