@@ -11,6 +11,7 @@ import type { Range } from "./types/dashboard";
 import { ranges } from "./data/dashboardData";
 import { parseMinutes } from "./utils/formatters";
 import { getActiveDaysMessage } from "./utils/dashboardHelpers";
+import AppHeader from "./components/layout/AppHeader";
 
 type Section = "Overview" | "Activity" | "Wellness" | "Settings";
 
@@ -102,7 +103,13 @@ export function App() {
     <div className="app">
       <Sidebar section={section} setSection={setSection} />
       <main>
-        <header>
+        <AppHeader 
+        section={section} 
+        range={range} 
+        onRangeChange={setRange} 
+        />
+
+        {/* <header>
           <div>
             <p className="eyebrow">{section} · Tuesday, June 18, 2024</p>
             <h1>
@@ -123,7 +130,7 @@ export function App() {
             </label>
             <div className="avatar">AS</div>
           </div>
-        </header>
+        </header> */}
         {renderPage()}
       </main>
     </div>
