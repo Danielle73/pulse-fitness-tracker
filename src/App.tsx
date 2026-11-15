@@ -12,8 +12,7 @@ import { ranges } from "./data/dashboardData";
 import { parseMinutes } from "./utils/formatters";
 import { getActiveDaysMessage } from "./utils/dashboardHelpers";
 import AppHeader from "./components/layout/AppHeader";
-
-type Section = "Overview" | "Activity" | "Wellness" | "Settings";
+import type { Section } from "./types/navigation";
 
 export function App() {
   const [range, setRange] = useState<Range>("This week");
