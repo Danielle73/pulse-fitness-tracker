@@ -13,12 +13,16 @@ import { isActivityInRange } from "./utils/formatters";
 import { getActiveDaysMessage } from "./utils/dashboardHelpers";
 import AppHeader from "./components/layout/AppHeader";
 import type { Section } from "./types/navigation";
+import type { StepEntry } from "./types/steps";
+import StepTracker from "./components/dashboard/StepTracker";
 
 export function App() {
   const [range, setRange] = useState<Range>("This week");
   const [section, setSection] = useState<Section>("Overview");
   const [activities, setActivities] =
     useState<ActivityType[]>(initialActivities);
+
+  const [stepEntries, setStepEntries] = useState<StepEntry[]>([]);
   const data = ranges[range];
   const filteredActivities = activities.filter((activity) =>
     isActivityInRange(activity.createdAt, range),
@@ -34,11 +38,16 @@ export function App() {
     0,
   );
 
-  const displayedCalories =
-    3240 +
-    activities
-      .slice(0, -3)
-      .reduce((sum, activity) => sum + activity.calories, 0);
+  // const displayedCalories =
+  //   3240 +
+  //   activities
+  //     .slice(0, -3)
+  //     .reduce((sum, activity) => sum + activity.calories, 0);
+
+  const displayedCalories = filteredActivities.reduce(
+    (sum, activity) => sum + activity.calories,
+    0,
+  );
 
   // const data = ranges[range];
   // const filteredActivities = activities.filter((activity) =>
@@ -65,6 +74,20 @@ export function App() {
     ]);
   }
 
+  function deleteActivity(id: number) {
+    setActivities((currentActivities) =>
+      currentActivities.filter((activity) => activity.id !== id),
+    );
+  }
+
+  function updateActivity(updatedActivity: ActivityType) {
+    setActivities((currentActivities) =>
+      currentActivities.map((activity) =>
+        activity.id === updatedActivity.id ? updatedActivity : activity,
+      ),
+    );
+  }
+
   const activeDays = new Set(
     filteredActivities.map((activity) =>
       new Date(activity.createdAt).toDateString(),
@@ -88,10 +111,14 @@ export function App() {
               values={data.values}
             />
 
+            <StepTracker />
+
             <RecentActivity
               activities={filteredActivities}
               activityOptions={activityOptions}
               onAddActivity={addActivity}
+              onDeleteActivity={deleteActivity}
+              onUpdateActivity={updateActivity}
             />
           </>
         );
