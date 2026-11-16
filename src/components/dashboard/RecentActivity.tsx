@@ -8,6 +8,7 @@ type RecentActivityProps = {
   activityOptions: ActivityOption[];
   onAddActivity: (activityType: string, duration: number) => void;
   onDeleteActivity: (id: number) => void;
+  onUpdateActivity: (updatedActivity: Activity) => void;
 };
 
 function RecentActivity({
@@ -15,10 +16,12 @@ function RecentActivity({
   activityOptions,
   onAddActivity,
   onDeleteActivity,
+  onUpdateActivity,
 }: RecentActivityProps) {
   const [isAddingActivity, setIsAddingActivity] = useState(false);
   const [activityType, setActivityType] = useState(activityOptions[0].name);
   const [duration, setDuration] = useState("");
+  const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -29,9 +32,28 @@ function RecentActivity({
       return;
     }
 
-    onAddActivity(activityType, minutes);
+    //onAddActivity(activityType, minutes);
+
+    if (editingActivity) {
+      const selectedActivity = activityOptions.find(
+        (activity) => activity.name === activityType,
+      );
+
+      if (!selectedActivity) return;
+
+      onUpdateActivity({
+        ...editingActivity,
+        icon: selectedActivity.icon,
+        name: selectedActivity.name,
+        duration: minutes,
+        calories: minutes * selectedActivity.caloriesPerMinute,
+      });
+    } else {
+      onAddActivity(activityType, minutes);
+    }
 
     setDuration("");
+    setEditingActivity(null);
     setIsAddingActivity(false);
   }
 
@@ -100,9 +122,7 @@ function RecentActivity({
                 </div>
               </td>
 
-              <td>
-                {formatActivityDate(activity.createdAt)}
-              </td>
+              <td>{formatActivityDate(activity.createdAt)}</td>
 
               {/* <td>{activity.createdAt}</td> */}
               <td>{activity.duration} min</td>
@@ -116,6 +136,18 @@ function RecentActivity({
                   onClick={() => onDeleteActivity(activity.id)}
                 >
                   Delete
+                </button>
+                <button
+                  className="primary-button"
+                  type="button"
+                  onClick={() => {
+                    setEditingActivity(activity);
+                    setActivityType(activity.name);
+                    setDuration(String(activity.duration));
+                    setIsAddingActivity(true);
+                  }}
+                >
+                  Edit
                 </button>
               </td>
             </tr>
