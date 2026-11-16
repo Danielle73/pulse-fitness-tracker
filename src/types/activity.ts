@@ -2,7 +2,7 @@ export type Activity = {
   id: number;
   icon: string;
   name: string;
-  date: string;
+  createdAt: string;
   duration: number;
   calories: number;
 };
