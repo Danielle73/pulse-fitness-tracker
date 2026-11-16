@@ -9,7 +9,7 @@ import Settings from "./pages/Settings";
 import { initialActivities, activityOptions } from "./data/activityData";
 import type { Range } from "./types/dashboard";
 import { ranges } from "./data/dashboardData";
-import { parseMinutes } from "./utils/formatters";
+import { isActivityInRange } from "./utils/formatters";
 import { getActiveDaysMessage } from "./utils/dashboardHelpers";
 import AppHeader from "./components/layout/AppHeader";
 import type { Section } from "./types/navigation";
@@ -20,15 +20,30 @@ export function App() {
   const [activities, setActivities] =
     useState<ActivityType[]>(initialActivities);
   const data = ranges[range];
-  const addedMinutes = activities
-    .slice(0, -3)
-    .reduce((sum, activity) => sum + activity.duration, 0);
-  const displayedMinutes = parseMinutes(data.minutes) + addedMinutes;
+  const filteredActivities = activities.filter((activity) =>
+    isActivityInRange(activity.createdAt, range),
+  );
+
+  // const addedMinutes = activities
+  //   .slice(0, -3)
+  //   .reduce((sum, activity) => sum + activity.duration, 0);
+  // const displayedMinutes = parseMinutes(data.minutes) + addedMinutes;
+
+  const displayedMinutes = filteredActivities.reduce(
+    (sum, activity) => sum + activity.duration,
+    0,
+  );
+
   const displayedCalories =
     3240 +
     activities
       .slice(0, -3)
       .reduce((sum, activity) => sum + activity.calories, 0);
+
+  // const data = ranges[range];
+  // const filteredActivities = activities.filter((activity) =>
+  //   isActivityInRange(activity.createdAt, range),
+  // );
 
   function addActivity(activityType: string, minutes: number) {
     const selectedActivity = activityOptions.find(
@@ -42,7 +57,7 @@ export function App() {
         id: Date.now(),
         icon: selectedActivity.icon,
         name: selectedActivity.name,
-        date: "Today, just now",
+        createdAt: new Date().toISOString(),
         duration: minutes,
         calories: minutes * selectedActivity.caloriesPerMinute,
       },
@@ -50,8 +65,11 @@ export function App() {
     ]);
   }
 
-  const activeDays = Math.min(7, 5 + (addedMinutes > 0 ? 1 : 0));
-
+  const activeDays = new Set(
+    filteredActivities.map((activity) =>
+      new Date(activity.createdAt).toDateString(),
+    ),
+  ).size;
   const activeDaysMessage = getActiveDaysMessage(activeDays);
 
   function renderPage() {
@@ -71,7 +89,7 @@ export function App() {
             />
 
             <RecentActivity
-              activities={activities}
+              activities={filteredActivities}
               activityOptions={activityOptions}
               onAddActivity={addActivity}
             />
