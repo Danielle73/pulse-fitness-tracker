@@ -23,6 +23,13 @@ function RecentActivity({
   const [duration, setDuration] = useState("");
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
 
+  function handleCloseForm() {
+    setIsAddingActivity(false);
+    setEditingActivity(null);
+    setActivityType(activityOptions[0].name);
+    setDuration("");
+  }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -64,9 +71,22 @@ function RecentActivity({
           <h2>Recent activity</h2>
           <p className="subtle">Your latest workouts</p>
         </div>
-        <button
+        {/* <button
           className="primary-button"
           onClick={() => setIsAddingActivity((current) => !current)}
+        >
+          {isAddingActivity ? "Close" : "+ Add activity"}
+        </button> */}
+
+        <button
+          className="primary-button"
+          onClick={() => {
+            if (isAddingActivity) {
+              handleCloseForm();
+            } else {
+              setIsAddingActivity(true);
+            }
+          }}
         >
           {isAddingActivity ? "Close" : "+ Add activity"}
         </button>
