@@ -39,8 +39,6 @@ function RecentActivity({
       return;
     }
 
-    //onAddActivity(activityType, minutes);
-
     if (editingActivity) {
       const selectedActivity = activityOptions.find(
         (activity) => activity.name === activityType,
@@ -71,12 +69,6 @@ function RecentActivity({
           <h2>Recent activity</h2>
           <p className="subtle">Your latest workouts</p>
         </div>
-        {/* <button
-          className="primary-button"
-          onClick={() => setIsAddingActivity((current) => !current)}
-        >
-          {isAddingActivity ? "Close" : "+ Add activity"}
-        </button> */}
 
         <button
           className="primary-button"
