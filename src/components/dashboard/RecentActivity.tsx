@@ -7,12 +7,14 @@ type RecentActivityProps = {
   activities: Activity[];
   activityOptions: ActivityOption[];
   onAddActivity: (activityType: string, duration: number) => void;
+  onDeleteActivity: (id: number) => void;
 };
 
 function RecentActivity({
   activities,
   activityOptions,
   onAddActivity,
+  onDeleteActivity,
 }: RecentActivityProps) {
   const [isAddingActivity, setIsAddingActivity] = useState(false);
   const [activityType, setActivityType] = useState(activityOptions[0].name);
@@ -85,6 +87,7 @@ function RecentActivity({
             <th>Duration</th>
             <th>Calories</th>
             <th>Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -106,6 +109,14 @@ function RecentActivity({
               <td>{activity.calories} kcal</td>
               <td>
                 <span className="pill">Completed</span>
+              </td>
+              <td>
+                <button
+                  className="primary-button"
+                  onClick={() => onDeleteActivity(activity.id)}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
