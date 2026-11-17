@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "./components/layout/Sidebar";
 import Overview from "./pages/Overview";
 import type { Activity as ActivityType } from "./types/activity";
@@ -15,14 +15,67 @@ import AppHeader from "./components/layout/AppHeader";
 import type { Section } from "./types/navigation";
 import type { StepEntry } from "./types/steps";
 import StepTracker from "./components/dashboard/StepTracker";
+import { getStoredData, saveData } from "./utils/storage";
 
 export function App() {
   const [range, setRange] = useState<Range>("This week");
   const [section, setSection] = useState<Section>("Overview");
-  const [activities, setActivities] =
-    useState<ActivityType[]>(initialActivities);
+  // const [activities, setActivities] = useState<ActivityType[]>(initialActivities);
 
-  const [stepEntries, setStepEntries] = useState<StepEntry[]>([]);
+//   const [activities, setActivities] = useState<ActivityType[]>(() => {
+//   const savedActivities = localStorage.getItem("activities");
+
+//   if (!savedActivities) {
+//     return initialActivities;
+//   }
+
+//   try {
+//     return JSON.parse(savedActivities) as ActivityType[];
+//   } catch {
+//     return initialActivities;
+//   }
+// });
+
+const [activities, setActivities] = useState<ActivityType[]>(() =>
+  getStoredData<ActivityType[]>("activities", initialActivities),
+);
+
+// useEffect(() => {
+//   localStorage.setItem("activities", JSON.stringify(activities));
+// }, [activities]);
+
+useEffect(() => {
+  saveData("activities", activities);
+}, [activities]);
+
+  // const [stepEntries, setStepEntries] = useState<StepEntry[]>([]);
+
+//   const [stepEntries, setStepEntries] = useState<StepEntry[]>(() => {
+//   const savedEntries = localStorage.getItem("stepEntries");
+
+//   if (!savedEntries) {
+//     return [];
+//   }
+
+//   try {
+//     return JSON.parse(savedEntries) as StepEntry[];
+//   } catch {
+//     return [];
+//   }
+// });
+
+const [stepEntries, setStepEntries] = useState<StepEntry[]>(() =>
+  getStoredData<StepEntry[]>("stepEntries", []),
+);
+
+// useEffect(() => {
+//   localStorage.setItem("stepEntries", JSON.stringify(stepEntries));
+// }, [stepEntries]);
+
+useEffect(() => {
+  saveData("stepEntries", stepEntries);
+}, [stepEntries]);
+
 
   function saveSteps(date: string, steps: number) {
     setStepEntries((currentEntries) => {
