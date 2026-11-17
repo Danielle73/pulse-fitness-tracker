@@ -39,6 +39,9 @@ export function App() {
   }
 
   const data = ranges[range];
+  const totalSteps = stepEntries
+    .filter((entry) => isActivityInRange(entry.date, range))
+    .reduce((total, entry) => total + entry.steps, 0);
   const filteredActivities = activities.filter((activity) =>
     isActivityInRange(activity.createdAt, range),
   );
@@ -116,7 +119,7 @@ export function App() {
         return (
           <>
             <Overview
-              steps={data.steps}
+              steps={totalSteps.toLocaleString("en-GB")}
               minutes={displayedMinutes}
               calories={displayedCalories}
               activeDays={activeDays}
