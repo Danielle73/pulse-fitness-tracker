@@ -46,31 +46,15 @@ export function App() {
     isActivityInRange(activity.createdAt, range),
   );
 
-  // const addedMinutes = activities
-  //   .slice(0, -3)
-  //   .reduce((sum, activity) => sum + activity.duration, 0);
-  // const displayedMinutes = parseMinutes(data.minutes) + addedMinutes;
-
   const displayedMinutes = filteredActivities.reduce(
     (sum, activity) => sum + activity.duration,
     0,
   );
 
-  // const displayedCalories =
-  //   3240 +
-  //   activities
-  //     .slice(0, -3)
-  //     .reduce((sum, activity) => sum + activity.calories, 0);
-
   const displayedCalories = filteredActivities.reduce(
     (sum, activity) => sum + activity.calories,
     0,
   );
-
-  // const data = ranges[range];
-  // const filteredActivities = activities.filter((activity) =>
-  //   isActivityInRange(activity.createdAt, range),
-  // );
 
   function addActivity(activityType: string, minutes: number) {
     const selectedActivity = activityOptions.find(
