@@ -384,6 +384,37 @@ h2 {
 .activity i.blue {
   background: #4b9cf5;
 }
+.activity i.pink {
+  background: #f76c8e;
+}
+.activity i.yellow {
+  background: #ffcc00;
+}
+
+.donut-segment.teal {
+  stroke: var(--teal);
+}
+
+.donut-segment.orange {
+  stroke: #ff9f43;
+}
+
+.donut-segment.purple {
+  stroke: #7c6cf2;
+}
+
+.donut-segment.blue {
+  stroke: #4b9cf5;
+}
+
+.donut-segment.pink {
+  stroke: #f76c8e;
+}
+
+.donut-segment.yellow {
+  stroke: #ffcc00;
+}
+
 .activity b {
   margin-left: auto;
   font-size: 12px;
