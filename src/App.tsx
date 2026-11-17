@@ -122,6 +122,7 @@ export function App() {
         return (
           <>
             <Overview
+              activities={filteredActivities}
               steps={totalSteps.toLocaleString("en-GB")}
               minutes={displayedMinutes}
               calories={displayedCalories}
