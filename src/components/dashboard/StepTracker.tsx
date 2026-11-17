@@ -1,13 +1,22 @@
 import { useState } from "react";
+import type { StepEntry } from "../../types/steps";
 
 type StepTrackerProps = {
+  stepEntries: StepEntry[];
   onSaveSteps: (date: string, steps: number) => void;
+  onDeleteSteps: (date: string) => void;
 };
 
-function StepTracker({ onSaveSteps }: StepTrackerProps) {
+function StepTracker({
+  stepEntries,
+  onSaveSteps,
+  onDeleteSteps,
+}: StepTrackerProps) {
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 
   const [steps, setSteps] = useState("");
+
+  const [editingDate, setEditingDate] = useState<string | null>(null);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -21,6 +30,13 @@ function StepTracker({ onSaveSteps }: StepTrackerProps) {
     onSaveSteps(date, stepCount);
 
     setSteps("");
+    setEditingDate(null);
+  }
+
+  function handleEdit(entry: StepEntry) {
+    setDate(entry.date);
+    setSteps(String(entry.steps));
+    setEditingDate(entry.date);
   }
 
   return (
@@ -55,10 +71,68 @@ function StepTracker({ onSaveSteps }: StepTrackerProps) {
           />
         </label>
 
-        <button className="primary-button" type="submit">
+        {/* <button className="primary-button" type="submit">
           Save steps
+        </button> */}
+
+        <button className="primary-button" type="submit">
+          {editingDate ? "Update steps" : "Save steps"}
         </button>
+
+        {editingDate && (
+          <button
+            type="button"
+            onClick={() => {
+              setEditingDate(null);
+              setSteps("");
+              setDate(new Date().toISOString().split("T")[0]);
+            }}
+          >
+            Cancel
+          </button>
+        )}
       </form>
+      <div className="step-entries">
+        <h3>Daily entries</h3>
+
+        {stepEntries.length === 0 ? (
+          <p className="subtle">
+            No step entries yet. Add your first one above!
+          </p>
+        ) : (
+          <ul>
+            {[...stepEntries]
+              .sort((a, b) => b.date.localeCompare(a.date))
+              .map((entry) => (
+                <li key={entry.date}>
+                  <span>
+                    {new Date(`${entry.date}T00:00:00`).toLocaleDateString(
+                      "en-GB",
+                      {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      },
+                    )}
+                  </span>
+
+                  <strong>{entry.steps.toLocaleString("en-GB")} steps</strong>
+
+                  <button type="button" onClick={() => handleEdit(entry)}>
+                    Edit
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onDeleteSteps(entry.date)}
+                  >
+                    Delete
+                  </button>
+                </li>
+              ))}
+          </ul>
+        )}
+      </div>
     </section>
   );
 }
