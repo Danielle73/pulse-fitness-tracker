@@ -23,6 +23,21 @@ export function App() {
     useState<ActivityType[]>(initialActivities);
 
   const [stepEntries, setStepEntries] = useState<StepEntry[]>([]);
+
+  function saveSteps(date: string, steps: number) {
+    setStepEntries((currentEntries) => {
+      const existingEntry = currentEntries.find((entry) => entry.date === date);
+
+      if (existingEntry) {
+        return currentEntries.map((entry) =>
+          entry.date === date ? { ...entry, steps } : entry,
+        );
+      }
+
+      return [...currentEntries, { date, steps }];
+    });
+  }
+
   const data = ranges[range];
   const filteredActivities = activities.filter((activity) =>
     isActivityInRange(activity.createdAt, range),
@@ -111,7 +126,7 @@ export function App() {
               values={data.values}
             />
 
-            <StepTracker />
+            <StepTracker onSaveSteps={saveSteps} />
 
             <RecentActivity
               activities={filteredActivities}
