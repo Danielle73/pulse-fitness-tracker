@@ -1,9 +1,27 @@
 import { useState } from "react";
 
-function StepTracker() {
+type StepTrackerProps = {
+  onSaveSteps: (date: string, steps: number) => void;
+};
+
+function StepTracker({ onSaveSteps }: StepTrackerProps) {
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 
   const [steps, setSteps] = useState("");
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const stepCount = Number(steps);
+
+    if (!Number.isInteger(stepCount) || stepCount < 0) {
+      return;
+    }
+
+    onSaveSteps(date, stepCount);
+
+    setSteps("");
+  }
 
   return (
     <section className="card panel">
@@ -13,7 +31,7 @@ function StepTracker() {
           <p className="subtle">Track your daily movement</p>
         </div>
       </div>
-      <form className="activity-form">
+      <form className="activity-form" onSubmit={handleSubmit}>
         <label>
           Date
           <input
