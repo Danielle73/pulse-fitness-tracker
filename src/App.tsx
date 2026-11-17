@@ -51,6 +51,12 @@ export function App() {
     });
   }
 
+  function deleteSteps(date: string) {
+    setStepEntries((currentEntries) =>
+      currentEntries.filter((entry) => entry.date !== date),
+    );
+  }
+
   const data = ranges[range];
   const totalSteps = stepEntries
     .filter((entry) => isActivityInRange(entry.date, range))
@@ -126,7 +132,10 @@ export function App() {
               values={data.values}
             />
 
-            <StepTracker onSaveSteps={saveSteps} />
+            <StepTracker 
+            stepEntries={stepEntries} 
+            onSaveSteps={saveSteps} 
+            onDeleteSteps={deleteSteps} />
 
             <RecentActivity
               activities={filteredActivities}
