@@ -20,62 +20,22 @@ import { getStoredData, saveData } from "./utils/storage";
 export function App() {
   const [range, setRange] = useState<Range>("This week");
   const [section, setSection] = useState<Section>("Overview");
-  // const [activities, setActivities] = useState<ActivityType[]>(initialActivities);
 
-//   const [activities, setActivities] = useState<ActivityType[]>(() => {
-//   const savedActivities = localStorage.getItem("activities");
+  const [activities, setActivities] = useState<ActivityType[]>(() =>
+    getStoredData<ActivityType[]>("activities", initialActivities),
+  );
 
-//   if (!savedActivities) {
-//     return initialActivities;
-//   }
+  useEffect(() => {
+    saveData("activities", activities);
+  }, [activities]);
 
-//   try {
-//     return JSON.parse(savedActivities) as ActivityType[];
-//   } catch {
-//     return initialActivities;
-//   }
-// });
+  const [stepEntries, setStepEntries] = useState<StepEntry[]>(() =>
+    getStoredData<StepEntry[]>("stepEntries", []),
+  );
 
-const [activities, setActivities] = useState<ActivityType[]>(() =>
-  getStoredData<ActivityType[]>("activities", initialActivities),
-);
-
-// useEffect(() => {
-//   localStorage.setItem("activities", JSON.stringify(activities));
-// }, [activities]);
-
-useEffect(() => {
-  saveData("activities", activities);
-}, [activities]);
-
-  // const [stepEntries, setStepEntries] = useState<StepEntry[]>([]);
-
-//   const [stepEntries, setStepEntries] = useState<StepEntry[]>(() => {
-//   const savedEntries = localStorage.getItem("stepEntries");
-
-//   if (!savedEntries) {
-//     return [];
-//   }
-
-//   try {
-//     return JSON.parse(savedEntries) as StepEntry[];
-//   } catch {
-//     return [];
-//   }
-// });
-
-const [stepEntries, setStepEntries] = useState<StepEntry[]>(() =>
-  getStoredData<StepEntry[]>("stepEntries", []),
-);
-
-// useEffect(() => {
-//   localStorage.setItem("stepEntries", JSON.stringify(stepEntries));
-// }, [stepEntries]);
-
-useEffect(() => {
-  saveData("stepEntries", stepEntries);
-}, [stepEntries]);
-
+  useEffect(() => {
+    saveData("stepEntries", stepEntries);
+  }, [stepEntries]);
 
   function saveSteps(date: string, steps: number) {
     setStepEntries((currentEntries) => {
