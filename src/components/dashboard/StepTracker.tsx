@@ -124,7 +124,15 @@ function StepTracker({
 
                   <button
                     type="button"
-                    onClick={() => onDeleteSteps(entry.date)}
+                    onClick={() => {
+                      onDeleteSteps(entry.date);
+
+                      if (editingDate === entry.date) {
+                        setEditingDate(null);
+                        setSteps("");
+                        setDate(new Date().toISOString().split("T")[0]);
+                      }
+                    }}
                   >
                     Delete
                   </button>
