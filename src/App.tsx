@@ -58,9 +58,36 @@ export function App() {
   }
 
   const data = ranges[range];
+
   const totalSteps = stepEntries
     .filter((entry) => isActivityInRange(entry.date, range))
     .reduce((total, entry) => total + entry.steps, 0);
+
+  const today = new Date();
+
+  const daysSinceMonday = (today.getDay() + 6) % 7;
+
+  const monday = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() - daysSinceMonday,
+  );
+
+  const weeklySteps = Array.from({ length: 7 }, (_, index) => {
+    const currentDate = new Date(monday);
+    currentDate.setDate(monday.getDate() + index);
+
+    const dateString = [
+      currentDate.getFullYear(),
+      String(currentDate.getMonth() + 1).padStart(2, "0"),
+      String(currentDate.getDate()).padStart(2, "0"),
+    ].join("-");
+
+    const entry = stepEntries.find((entry) => entry.date === dateString);
+
+    return (entry?.steps ?? 0) / 1000;
+  });
+
   const filteredActivities = activities.filter((activity) =>
     isActivityInRange(activity.createdAt, range),
   );
@@ -130,13 +157,15 @@ export function App() {
               activeDaysMessage={activeDaysMessage}
               range={range}
               goal={data.goal}
-              values={data.values}
+              // values={data.values}
+              values={range === "This week" ? weeklySteps : data.values}
             />
 
-            <StepTracker 
-            stepEntries={stepEntries} 
-            onSaveSteps={saveSteps} 
-            onDeleteSteps={deleteSteps} />
+            <StepTracker
+              stepEntries={stepEntries}
+              onSaveSteps={saveSteps}
+              onDeleteSteps={deleteSteps}
+            />
 
             <RecentActivity
               activities={filteredActivities}
