@@ -11,6 +11,7 @@ type OverviewProps = {
   range: string;
   goal: string;
   values: number[];
+  labels: string[];
   activities: Activity[];
 };
 
@@ -24,6 +25,7 @@ function Overview({
   range,
   goal,
   values,
+  labels,
 }: OverviewProps) {
   const exerciseBreakdown = activities.reduce(
     (breakdown, activity) => {
@@ -103,7 +105,9 @@ function Overview({
             </div>
           </div>
           <div className="chart-wrap">
-            <TrendChart values={values} />
+            <TrendChart 
+            values={values} 
+            labels={labels} />
           </div>
           <div className="goal">
             <div className="goal-row">
