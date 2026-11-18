@@ -1,7 +1,26 @@
-function TrendChart({ values }: { values: number[] }) {
+type TrendChartProps = {
+  values: number[];
+  labels: string[];
+};
+
+function TrendChart({ values, labels }: TrendChartProps) {
+  // const points = values
+  //   .map((value, index) => `${58 + index * 100},${180 - value * 13}`)
+  //   .join(" ");
+
+  const chartWidth = 600;
+  const chartHeight = 156;
+  const maxValue = Math.max(12, ...values);
+
   const points = values
-    .map((value, index) => `${58 + index * 100},${180 - value * 13}`)
+    .map((value, index) => {
+      const x = 58 + (index / Math.max(values.length - 1, 1)) * chartWidth;
+      const y = 180 - (value / maxValue) * chartHeight;
+
+      return `${x},${y}`;
+    })
     .join(" ");
+
   const area = `${points} 658,180 58,180`;
   return (
     <svg viewBox="0 0 700 210" role="img" aria-label="Daily steps trend">
@@ -28,7 +47,7 @@ function TrendChart({ values }: { values: number[] }) {
       </text>
       <polygon className="line-fill" points={area} />
       <polyline className="steps-line" points={points} />
-      {values.map((value, index) => (
+      {/* {values.map((value, index) => (
         <circle
           className="steps-dot"
           key={index}
@@ -36,12 +55,36 @@ function TrendChart({ values }: { values: number[] }) {
           cy={180 - value * 13}
           r="5"
         />
-      ))}
-      {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, index) => (
+      ))} */}
+
+      {values.map((value, index) => {
+        const x = 58 + (index / Math.max(values.length - 1, 1)) * chartWidth;
+        const y = 180 - (value / maxValue) * chartHeight;
+
+        return <circle className="steps-dot" key={index} cx={x} cy={y} r="5" />;
+      })}
+
+      {/* {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, index) => (
         <text className="axis-label" key={day} x={49 + index * 100} y="202">
           {day}
         </text>
-      ))}
+      ))} */}
+
+      {labels.map((label, index) => {
+        const x = 58 + (index / Math.max(values.length - 1, 1)) * chartWidth;
+
+        return (
+          <text
+            className="axis-label"
+            key={label}
+            x={x}
+            y="202"
+            textAnchor="middle"
+          >
+            {label}
+          </text>
+        );
+      })}
     </svg>
   );
 }
