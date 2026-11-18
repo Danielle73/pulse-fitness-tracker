@@ -88,6 +88,78 @@ export function App() {
     return (entry?.steps ?? 0) / 1000;
   });
 
+  // Get the number of days in the current month
+  const daysInMonth = new Date(
+    today.getFullYear(),
+    today.getMonth() + 1,
+    0,
+  ).getDate();
+
+  // Calculate step totals for five 7-day periods
+  const monthlySteps = Array.from({ length: 5 }, (_, index) => {
+    const startDay = index * 7 + 1;
+    const endDay = Math.min(startDay + 6, daysInMonth);
+
+    const total = stepEntries
+      .filter((entry) => {
+        const [year, month, day] = entry.date.split("-").map(Number);
+
+        return (
+          year === today.getFullYear() &&
+          month === today.getMonth() + 1 &&
+          day >= startDay &&
+          day <= endDay
+        );
+      })
+      .reduce((total, entry) => total + entry.steps, 0);
+
+    return total / 1000;
+  });
+
+  // Labels for the monthly chart
+  const monthlyLabels = ["1–7", "8–14", "15–21", "22–28", "29–31"];
+
+  const yearlySteps = Array.from({ length: 12 }, (_, index) => {
+    const total = stepEntries
+      .filter((entry) => {
+        const [year, month] = entry.date.split("-").map(Number);
+
+        return year === today.getFullYear() && month === index + 1;
+      })
+      .reduce((total, entry) => total + entry.steps, 0);
+
+    return total / 1000;
+  });
+
+  const yearlyLabels = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const chartValues =
+    range === "This week"
+      ? weeklySteps
+      : range === "This month"
+        ? monthlySteps
+        : yearlySteps;
+
+  const chartLabels =
+    range === "This week"
+      ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+      : range === "This month"
+        ? monthlyLabels
+        : yearlyLabels;
+
   const filteredActivities = activities.filter((activity) =>
     isActivityInRange(activity.createdAt, range),
   );
@@ -158,7 +230,9 @@ export function App() {
               range={range}
               goal={data.goal}
               // values={data.values}
-              values={range === "This week" ? weeklySteps : data.values}
+              // values={range === "This week" ? weeklySteps : data.values}
+              values={chartValues}
+              labels={chartLabels}
             />
 
             <StepTracker
