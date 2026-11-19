@@ -62,19 +62,19 @@ function Overview({
           title="Steps walked"
           icon="♧"
           value={steps}
-          percentage={12.4}
+          //percentage={12.4}
         />
         <StatCard
           title="Exercise minutes"
           icon="◷"
           value={minutes.toLocaleString()}
-          percentage={8.2}
+          //percentage={8.2}
         />
         <StatCard
           title="Calories burned"
           icon="♨"
           value={calories.toLocaleString()}
-          percentage={5.7}
+          //percentage={5.7}
         />
 
         <StatCard
