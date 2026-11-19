@@ -4,10 +4,6 @@ type TrendChartProps = {
 };
 
 function TrendChart({ values, labels }: TrendChartProps) {
-  // const points = values
-  //   .map((value, index) => `${58 + index * 100},${180 - value * 13}`)
-  //   .join(" ");
-
   const chartWidth = 600;
   const chartHeight = 156;
   const maxValue = Math.max(12, ...values);
@@ -47,29 +43,8 @@ function TrendChart({ values, labels }: TrendChartProps) {
         </text>
       ))}
 
-      {/* <text className="axis-label" x="0" y="28">
-        12k
-      </text>
-      <text className="axis-label" x="5" y="80">
-        8k
-      </text>
-      <text className="axis-label" x="5" y="132">
-        4k
-      </text>
-      <text className="axis-label" x="15" y="184">
-        0
-      </text> */}
       <polygon className="line-fill" points={area} />
       <polyline className="steps-line" points={points} />
-      {/* {values.map((value, index) => (
-        <circle
-          className="steps-dot"
-          key={index}
-          cx={58 + index * 100}
-          cy={180 - value * 13}
-          r="5"
-        />
-      ))} */}
 
       {values.map((value, index) => {
         const x = 58 + (index / Math.max(values.length - 1, 1)) * chartWidth;
@@ -77,12 +52,6 @@ function TrendChart({ values, labels }: TrendChartProps) {
 
         return <circle className="steps-dot" key={index} cx={x} cy={y} r="5" />;
       })}
-
-      {/* {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, index) => (
-        <text className="axis-label" key={day} x={49 + index * 100} y="202">
-          {day}
-        </text>
-      ))} */}
 
       {labels.map((label, index) => {
         const x = 58 + (index / Math.max(values.length - 1, 1)) * chartWidth;
