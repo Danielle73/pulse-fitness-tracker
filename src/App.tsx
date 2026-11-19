@@ -257,6 +257,8 @@ export function App() {
             activities={activities}
             activityOptions={activityOptions}
             onAddActivity={addActivity}
+            onDeleteActivity={deleteActivity}
+            onUpdateActivity={updateActivity}
           />
         );
 
