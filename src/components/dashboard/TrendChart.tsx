@@ -12,6 +12,13 @@ function TrendChart({ values, labels }: TrendChartProps) {
   const chartHeight = 156;
   const maxValue = Math.max(12, ...values);
 
+  const axisLabels = [
+    { value: maxValue, x: 0, y: 28 },
+    { value: (maxValue * 2) / 3, x: 5, y: 80 },
+    { value: maxValue / 3, x: 5, y: 132 },
+    { value: 0, x: 15, y: 184 },
+  ];
+
   const points = values
     .map((value, index) => {
       const x = 58 + (index / Math.max(values.length - 1, 1)) * chartWidth;
@@ -33,7 +40,14 @@ function TrendChart({ values, labels }: TrendChartProps) {
       {[24, 76, 128, 180].map((y) => (
         <line className="grid-line" key={y} x1="38" y1={y} x2="680" y2={y} />
       ))}
-      <text className="axis-label" x="0" y="28">
+
+      {axisLabels.map((label) => (
+        <text className="axis-label" key={label.y} x={label.x} y={label.y}>
+          {label.value === 0 ? "0" : `${Number(label.value.toFixed(1))}k`}
+        </text>
+      ))}
+
+      {/* <text className="axis-label" x="0" y="28">
         12k
       </text>
       <text className="axis-label" x="5" y="80">
@@ -44,7 +58,7 @@ function TrendChart({ values, labels }: TrendChartProps) {
       </text>
       <text className="axis-label" x="15" y="184">
         0
-      </text>
+      </text> */}
       <polygon className="line-fill" points={area} />
       <polyline className="steps-line" points={points} />
       {/* {values.map((value, index) => (
