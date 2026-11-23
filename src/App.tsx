@@ -211,10 +211,20 @@ export function App() {
     }
   }
 
-  function deleteActivity(id: number) {
-    setActivities((currentActivities) =>
-      currentActivities.filter((activity) => activity.id !== id),
-    );
+  async function deleteActivity(id: number) {
+    try {
+      const response = await fetch(`/api/activities/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete activity.");
+      }
+      setActivities((currentActivities) =>
+        currentActivities.filter((activity) => activity.id !== id),
+      );
+    } catch (error) {
+      console.error("Error deleting activity:", error);
+    }
   }
 
   function updateActivity(updatedActivity: ActivityType) {
