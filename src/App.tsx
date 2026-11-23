@@ -227,14 +227,7 @@ export function App() {
     }
   }
 
-  // async function updateActivity(updatedActivity: ActivityType) {
-  //   setActivities((currentActivities) =>
-  //     currentActivities.map((activity) =>
-  //       activity.id === updatedActivity.id ? updatedActivity : activity,
-  //     ),
-  //   );
-  // }
-
+  
   async function updateActivity(updatedActivity: ActivityType) {
     try {
     const response = await fetch(`/api/activities/${updatedActivity.id}`, {
