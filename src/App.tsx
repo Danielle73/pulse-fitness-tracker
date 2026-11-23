@@ -21,15 +21,7 @@ export function App() {
   const [range, setRange] = useState<Range>("This week");
   const [section, setSection] = useState<Section>("Overview");
 
-  // const [activities, setActivities] = useState<ActivityType[]>(() =>
-  //   getStoredData<ActivityType[]>("activities", initialActivities),
-  // );
-
   const [activities, setActivities] = useState<ActivityType[]>([]);
-
-  // useEffect(() => {
-  //   saveData("activities", activities);
-  // }, [activities]);
 
   useEffect(() => {
     async function fetchActivities() {
@@ -196,48 +188,28 @@ export function App() {
     0,
   );
 
-  // async function addActivity(activityType: string, minutes: number) {
-  //   const selectedActivity = activityOptions.find(
-  //     (activity) => activity.name === activityType,
-  //   );
-
-  //   if (!selectedActivity) return;
-
-  //   setActivities((current) => [
-  //     {
-  //       id: Date.now(),
-  //       icon: selectedActivity.icon,
-  //       name: selectedActivity.name,
-  //       createdAt: new Date().toISOString(),
-  //       duration: minutes,
-  //       calories: minutes * selectedActivity.caloriesPerMinute,
-  //     },
-  //     ...current,
-  //   ]);
-  // }
-
   async function addActivity(activityType: string, minutes: number) {
     try {
-    const response = await fetch("/api/activities", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: activityType,
-        duration: minutes,
-      }),
-    });
-    if (!response.ok) {
-      throw new Error("Failed to create activity.");
-    }
+      const response = await fetch("/api/activities", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: activityType,
+          duration: minutes,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to create activity.");
+      }
 
-    const newActivity: ActivityType = await response.json();
-    setActivities((currentActivities) => [newActivity, ...currentActivities]);
-  } catch (error) {
-    console.error("Error adding activity:", error);
+      const newActivity: ActivityType = await response.json();
+      setActivities((currentActivities) => [newActivity, ...currentActivities]);
+    } catch (error) {
+      console.error("Error adding activity:", error);
+    }
   }
-}
 
   function deleteActivity(id: number) {
     setActivities((currentActivities) =>
@@ -274,8 +246,6 @@ export function App() {
               activeDaysMessage={activeDaysMessage}
               range={range}
               goal={data.goal}
-              // values={data.values}
-              // values={range === "This week" ? weeklySteps : data.values}
               values={chartValues}
               labels={chartLabels}
             />
