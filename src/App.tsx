@@ -227,13 +227,41 @@ export function App() {
     }
   }
 
-  function updateActivity(updatedActivity: ActivityType) {
+  // async function updateActivity(updatedActivity: ActivityType) {
+  //   setActivities((currentActivities) =>
+  //     currentActivities.map((activity) =>
+  //       activity.id === updatedActivity.id ? updatedActivity : activity,
+  //     ),
+  //   );
+  // }
+
+  async function updateActivity(updatedActivity: ActivityType) {
+    try {
+    const response = await fetch(`/api/activities/${updatedActivity.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: updatedActivity.name,
+        duration: updatedActivity.duration,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to update activity.");
+    }
+    const updatedActivityFromServer: ActivityType = await response.json();
     setActivities((currentActivities) =>
       currentActivities.map((activity) =>
-        activity.id === updatedActivity.id ? updatedActivity : activity,
+        activity.id === updatedActivityFromServer.id
+          ? updatedActivityFromServer
+          : activity,
       ),
     );
-  }
+  } catch (error) {
+    console.error("Error updating activity:", error);
+  } 
+}
 
   const activeDays = new Set(
     filteredActivities.map((activity) =>
