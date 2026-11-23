@@ -126,9 +126,28 @@ app.put("/api/activities/:id", (req, res) => {
   existingActivity.name = req.body.name;
   existingActivity.duration = req.body.duration;
   existingActivity.calories =
-  req.body.duration * selectedActivity.caloriesPerMinute;
+    req.body.duration * selectedActivity.caloriesPerMinute;
 
   res.status(200).json(existingActivity);
+});
+
+app.delete("/api/activities/:id", (req, res) => {
+  const activityIndex = activities.findIndex(
+    (activity) => activity.id === Number(req.params.id),
+  );
+
+  if (activityIndex === -1) {
+    return res.status(404).json({
+      message: "Activity not found.",
+    });
+  }
+
+  activities.splice(activityIndex, 1);
+
+  res.status(200).json({
+    message: "Activity deleted successfully.",
+  }); 
+
 });
 
 app.listen(PORT, () => {
