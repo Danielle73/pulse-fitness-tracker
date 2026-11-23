@@ -6,7 +6,7 @@ import RecentActivity from "./components/dashboard/RecentActivity";
 import Activity from "./pages/Activity";
 import Wellness from "./pages/Wellness";
 import Settings from "./pages/Settings";
-import { initialActivities, activityOptions } from "./data/activityData";
+import { activityOptions } from "./data/activityData";
 import type { Range } from "./types/dashboard";
 import { ranges } from "./data/dashboardData";
 import { isActivityInRange } from "./utils/formatters";
@@ -21,13 +21,35 @@ export function App() {
   const [range, setRange] = useState<Range>("This week");
   const [section, setSection] = useState<Section>("Overview");
 
-  const [activities, setActivities] = useState<ActivityType[]>(() =>
-    getStoredData<ActivityType[]>("activities", initialActivities),
-  );
+  // const [activities, setActivities] = useState<ActivityType[]>(() =>
+  //   getStoredData<ActivityType[]>("activities", initialActivities),
+  // );
+
+  const [activities, setActivities] = useState<ActivityType[]>([]);
+
+  // useEffect(() => {
+  //   saveData("activities", activities);
+  // }, [activities]);
 
   useEffect(() => {
-    saveData("activities", activities);
-  }, [activities]);
+    async function fetchActivities() {
+      try {
+        const response = await fetch("/api/activities");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch activities.");
+        }
+
+        const data: ActivityType[] = await response.json();
+
+        setActivities(data);
+      } catch (error) {
+        console.error("Error fetching activities:", error);
+      }
+    }
+
+    fetchActivities();
+  }, []);
 
   const [stepEntries, setStepEntries] = useState<StepEntry[]>(() =>
     getStoredData<StepEntry[]>("stepEntries", []),
@@ -174,25 +196,48 @@ export function App() {
     0,
   );
 
-  function addActivity(activityType: string, minutes: number) {
-    const selectedActivity = activityOptions.find(
-      (activity) => activity.name === activityType,
-    );
+  // async function addActivity(activityType: string, minutes: number) {
+  //   const selectedActivity = activityOptions.find(
+  //     (activity) => activity.name === activityType,
+  //   );
 
-    if (!selectedActivity) return;
+  //   if (!selectedActivity) return;
 
-    setActivities((current) => [
-      {
-        id: Date.now(),
-        icon: selectedActivity.icon,
-        name: selectedActivity.name,
-        createdAt: new Date().toISOString(),
-        duration: minutes,
-        calories: minutes * selectedActivity.caloriesPerMinute,
+  //   setActivities((current) => [
+  //     {
+  //       id: Date.now(),
+  //       icon: selectedActivity.icon,
+  //       name: selectedActivity.name,
+  //       createdAt: new Date().toISOString(),
+  //       duration: minutes,
+  //       calories: minutes * selectedActivity.caloriesPerMinute,
+  //     },
+  //     ...current,
+  //   ]);
+  // }
+
+  async function addActivity(activityType: string, minutes: number) {
+    try {
+    const response = await fetch("/api/activities", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      ...current,
-    ]);
+      body: JSON.stringify({
+        name: activityType,
+        duration: minutes,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to create activity.");
+    }
+
+    const newActivity: ActivityType = await response.json();
+    setActivities((currentActivities) => [newActivity, ...currentActivities]);
+  } catch (error) {
+    console.error("Error adding activity:", error);
   }
+}
 
   function deleteActivity(id: number) {
     setActivities((currentActivities) =>
