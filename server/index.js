@@ -1,9 +1,21 @@
+require("dotenv").config();
+
 const express = require("express");
+
+const pool = require("./db");
 
 const app = express();
 app.use(express.json());
 
 const PORT = 3000;
+
+pool.query("SELECT NOW()", (error, result) => {
+  if (error) {
+    console.error("Database connection failed:", error);
+  } else {
+    console.log("Database connected:", result.rows[0]);
+  }
+});
 
 const activities = [
   {
