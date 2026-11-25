@@ -125,12 +125,56 @@ app.post("/api/activities", async (req, res) => {
   }
 });
 
-app.put("/api/activities/:id", (req, res) => {
-  const existingActivity = activities.find(
-    (activity) => activity.id === Number(req.params.id),
-  );
+// app.put("/api/activities/:id", (req, res) => {
+//   const existingActivity = activities.find(
+//     (activity) => activity.id === Number(req.params.id),
+//   );
 
-  if (!existingActivity) {
+//   if (!existingActivity) {
+//     return res.status(404).json({
+//       message: "Activity not found.",
+//     });
+//   }
+
+//   if (typeof req.body.name !== "string" || req.body.name.trim() === "") {
+//     return res.status(400).json({
+//       message: "Activity name is required and must be a string.",
+//     });
+//   }
+
+//   if (
+//     typeof req.body.duration !== "number" ||
+//     !Number.isInteger(req.body.duration) ||
+//     req.body.duration < 1 ||
+//     req.body.duration > 1440
+//   ) {
+//     return res.status(400).json({
+//       message: "Invalid duration.",
+//     });
+//   }
+
+//   const selectedActivity = activityOptions[req.body.name];
+
+//   if (!selectedActivity) {
+//     return res.status(400).json({
+//       message: "Invalid activity name.",
+//     });
+//   }
+
+//   existingActivity.icon = selectedActivity.icon;
+//   existingActivity.name = req.body.name;
+//   existingActivity.duration = req.body.duration;
+//   existingActivity.calories =
+//     req.body.duration * selectedActivity.caloriesPerMinute;
+
+//   res.status(200).json(existingActivity);
+// });
+
+
+app.put("/api/activities/:id", async (req, res) => {
+  const activityId = Number(req.params.id);
+
+  if (!Number.isInteger(activityId) || activityId < 1) {
     return res.status(404).json({
       message: "Activity not found.",
     });
@@ -161,14 +205,47 @@ app.put("/api/activities/:id", (req, res) => {
     });
   }
 
-  existingActivity.icon = selectedActivity.icon;
-  existingActivity.name = req.body.name;
-  existingActivity.duration = req.body.duration;
-  existingActivity.calories =
-    req.body.duration * selectedActivity.caloriesPerMinute;
+  try {
+    const result = await pool.query(
+      `UPDATE activities
+       SET
+         icon = $1,
+         name = $2,
+         duration = $3,
+         calories = $4
+       WHERE id = $5
+       RETURNING
+         id,
+         icon,
+         name,
+         created_at AS "createdAt",
+         duration,
+         calories`,
+      [
+        selectedActivity.icon,
+        req.body.name,
+        req.body.duration,
+        req.body.duration * selectedActivity.caloriesPerMinute,
+        activityId,
+      ],
+    );
 
-  res.status(200).json(existingActivity);
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        message: "Activity not found.",
+      });
+    }
+
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error("Error updating activity:", error);
+
+    res.status(500).json({
+      message: "Failed to update activity.",
+    });
+  }
 });
+
 
 app.delete("/api/activities/:id", (req, res) => {
   const activityIndex = activities.findIndex(
