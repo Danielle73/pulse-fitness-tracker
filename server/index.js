@@ -200,22 +200,57 @@ app.put("/api/activities/:id", async (req, res) => {
   }
 });
 
-app.delete("/api/activities/:id", (req, res) => {
-  const activityIndex = activities.findIndex(
-    (activity) => activity.id === Number(req.params.id),
-  );
+// app.delete("/api/activities/:id", (req, res) => {
+//   const activityIndex = activities.findIndex(
+//     (activity) => activity.id === Number(req.params.id),
+//   );
 
-  if (activityIndex === -1) {
+//   if (activityIndex === -1) {
+//     return res.status(404).json({
+//       message: "Activity not found.",
+//     });
+//   }
+
+//   activities.splice(activityIndex, 1);
+
+//   res.status(200).json({
+//     message: "Activity deleted successfully.",
+//   });
+// });
+
+app.delete("/api/activities/:id", async (req, res) => {
+  const activityId = Number(req.params.id);
+
+  if (!Number.isInteger(activityId) || activityId < 1) {
     return res.status(404).json({
       message: "Activity not found.",
     });
   }
 
-  activities.splice(activityIndex, 1);
+  try {
+    const result = await pool.query(
+      `DELETE FROM activities
+       WHERE id = $1
+       RETURNING *`,
+      [activityId],
+    );
 
-  res.status(200).json({
-    message: "Activity deleted successfully.",
-  });
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        message: "Activity not found.",
+      });
+    }
+
+    res.status(200).json({
+      message: "Activity deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Error deleting activity:", error);
+
+    res.status(500).json({
+      message: "Failed to delete activity.",
+    });
+  }
 });
 
 app.listen(PORT, () => {
