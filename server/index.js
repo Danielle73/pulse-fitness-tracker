@@ -52,8 +52,32 @@ app.get("/", (req, res) => {
   });
 });
 
-app.get("/api/activities", (req, res) => {
-  res.json(activities);
+// app.get("/api/activities", (req, res) => {
+//   res.json(activities);
+// });
+
+app.get("/api/activities", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT 
+        id, 
+        icon, 
+        name, 
+        created_at AS "createdAt", 
+        duration, 
+        calories 
+      FROM activities
+      ORDER BY created_at DESC`,
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching activities:", error);
+
+    res.status(500).json({
+      message: "Failed to fetch activities.",
+    });
+  }
 });
 
 app.post("/api/activities", (req, res) => {
@@ -158,8 +182,7 @@ app.delete("/api/activities/:id", (req, res) => {
 
   res.status(200).json({
     message: "Activity deleted successfully.",
-  }); 
-
+  });
 });
 
 app.listen(PORT, () => {
