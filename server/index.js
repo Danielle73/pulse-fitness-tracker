@@ -125,52 +125,6 @@ app.post("/api/activities", async (req, res) => {
   }
 });
 
-// app.put("/api/activities/:id", (req, res) => {
-//   const existingActivity = activities.find(
-//     (activity) => activity.id === Number(req.params.id),
-//   );
-
-//   if (!existingActivity) {
-//     return res.status(404).json({
-//       message: "Activity not found.",
-//     });
-//   }
-
-//   if (typeof req.body.name !== "string" || req.body.name.trim() === "") {
-//     return res.status(400).json({
-//       message: "Activity name is required and must be a string.",
-//     });
-//   }
-
-//   if (
-//     typeof req.body.duration !== "number" ||
-//     !Number.isInteger(req.body.duration) ||
-//     req.body.duration < 1 ||
-//     req.body.duration > 1440
-//   ) {
-//     return res.status(400).json({
-//       message: "Invalid duration.",
-//     });
-//   }
-
-//   const selectedActivity = activityOptions[req.body.name];
-
-//   if (!selectedActivity) {
-//     return res.status(400).json({
-//       message: "Invalid activity name.",
-//     });
-//   }
-
-//   existingActivity.icon = selectedActivity.icon;
-//   existingActivity.name = req.body.name;
-//   existingActivity.duration = req.body.duration;
-//   existingActivity.calories =
-//     req.body.duration * selectedActivity.caloriesPerMinute;
-
-//   res.status(200).json(existingActivity);
-// });
-
-
 app.put("/api/activities/:id", async (req, res) => {
   const activityId = Number(req.params.id);
 
@@ -245,7 +199,6 @@ app.put("/api/activities/:id", async (req, res) => {
     });
   }
 });
-
 
 app.delete("/api/activities/:id", (req, res) => {
   const activityIndex = activities.findIndex(
