@@ -52,10 +52,6 @@ app.get("/", (req, res) => {
   });
 });
 
-// app.get("/api/activities", (req, res) => {
-//   res.json(activities);
-// });
-
 app.get("/api/activities", async (req, res) => {
   try {
     const result = await pool.query(
@@ -80,9 +76,7 @@ app.get("/api/activities", async (req, res) => {
   }
 });
 
-app.post("/api/activities", (req, res) => {
-  const newId = Math.max(...activities.map((activity) => activity.id)) + 1;
-
+app.post("/api/activities", async (req, res) => {
   if (typeof req.body.name !== "string" || req.body.name.trim() === "") {
     return res.status(400).json({
       message: "Activity name is required and must be a string.",
@@ -108,18 +102,27 @@ app.post("/api/activities", (req, res) => {
     });
   }
 
-  const newActivity = {
-    id: newId,
-    icon: selectedActivity.icon,
-    name: req.body.name,
-    createdAt: new Date().toISOString(),
-    duration: req.body.duration,
-    calories: selectedActivity.caloriesPerMinute * req.body.duration,
-  };
+  try {
+    const result = await pool.query(
+      `INSERT INTO activities (icon, name, duration, calories)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [
+        selectedActivity.icon,
+        req.body.name,
+        req.body.duration,
+        selectedActivity.caloriesPerMinute * req.body.duration,
+      ],
+    );
 
-  activities.push(newActivity);
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error("Error creating activity:", error);
 
-  res.status(201).json(newActivity);
+    res.status(500).json({
+      message: "Failed to create activity.",
+    });
+  }
 });
 
 app.put("/api/activities/:id", (req, res) => {
