@@ -87,7 +87,7 @@ app.post("/api/activities", async (req, res) => {
     const result = await pool.query(
       `INSERT INTO activities (icon, name, duration, calories)
        VALUES ($1, $2, $3, $4)
-       RETURNIN
+       RETURNING
          id,
          icon,
          name,
