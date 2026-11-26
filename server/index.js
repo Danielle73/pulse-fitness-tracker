@@ -17,25 +17,6 @@ pool.query("SELECT NOW()", (error, result) => {
   }
 });
 
-const activities = [
-  {
-    id: 1,
-    icon: "🏃",
-    name: "Running",
-    createdAt: "2026-11-20T08:30:00.000Z",
-    duration: 30,
-    calories: 360,
-  },
-  {
-    id: 2,
-    icon: "🏊",
-    name: "Swimming",
-    createdAt: "2026-11-19T17:00:00.000Z",
-    duration: 40,
-    calories: 400,
-  },
-];
-
 const activityOptions = {
   Walking: { icon: "🚶", caloriesPerMinute: 4 },
   Running: { icon: "🏃", caloriesPerMinute: 12 },
